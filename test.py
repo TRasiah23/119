@@ -1,68 +1,161 @@
 import turtle as trtl
-turtle= trtl.Turtle()
-turtle.speed(3)
-def shell():
-    turtle.fillcolor("green")
-    turtle.begin_fill()
-    turtle.circle(100)  
-    turtle.end_fill()
 
-def draw_head():
-    turtle.penup()
-    turtle.goto(0, 100)  
-    turtle.pendown()
-    turtle.fillcolor("green")
-    turtle.begin_fill()
-    turtle.circle(30) 
-    turtle.end_fill()
+# Define function to draw a turtle
+def draw_turtle(painter, x, y):
+    painter.penup()
+    painter.shape("turtle")
+    painter.turtlesize(6)
+    painter.goto(x, y)
+    painter.color("green")
+    painter.stamp()
 
-def draw_eyes():
-    for x in [-15, 15]:  
-        turtle.penup()
-        turtle.goto(x, 130)  
-        turtle.pendown()
-        turtle.fillcolor("white")
-        turtle.begin_fill()
-        turtle.circle(10)  
-        turtle.end_fill()
+# Draw a more realistic cat
+def draw_cat(painter, x, y):
+    painter.penup()
+    painter.goto(x, y)
+    painter.color("gray")
+    
+    # Draw body
+    painter.begin_fill()
+    painter.circle(40)  # Main body
+    painter.end_fill()
+
+    # Draw head
+    painter.goto(x, y + 60)
+    painter.begin_fill()
+    painter.circle(25)  # Head
+    painter.end_fill()
+
+    # Draw eyes
+    painter.goto(x - 7, y + 90)
+    painter.color("white")
+    painter.begin_fill()
+    painter.circle(5)  # Left eye
+    painter.end_fill()
+
+    painter.goto(x + 7, y + 90)
+    painter.color("white")
+    painter.begin_fill()
+    painter.circle(5)  # Right eye
+    painter.end_fill()
+
+    # Draw pupils
+    painter.goto(x - 7, y + 90)
+    painter.color("black")
+    painter.begin_fill()
+    painter.circle(2)  # Left pupil
+    painter.end_fill()
+
+    painter.goto(x + 7, y + 90)
+    painter.begin_fill()
+    painter.circle(2)  # Right pupil
+    painter.end_fill()
+
+    # Draw ears
+    painter.goto(x - 15, y + 45)
+    painter.color("gray")
+    painter.begin_fill()
+    painter.goto(x - 10, y + 60)
+    painter.goto(x, y + 45)
+    painter.end_fill()
+
+    painter.goto(x + 15, y + 45)
+    painter.begin_fill()
+    painter.goto(x + 10, y + 60)
+    painter.goto(x, y + 45)
+    painter.end_fill()
+
+    # Draw whiskers
+    painter.goto(x - 15, y + 30)
+    painter.pendown()
+    painter.goto(x + 15, y + 30)
+    painter.penup()
+
+    # Draw tail
+    painter.goto(x - 30, y)
+    painter.pendown()
+    painter.goto(x - 40, y + 10)
+    painter.goto(x - 30, y + 5)
+    painter.penup()
+
+def draw_bird(painter, x, y):
+    painter.penup()
+    painter.goto(x, y)
+    painter.color("blue")
+    
+    # Draw body
+    painter.begin_fill()
+    painter.circle(15)  # Body
+    painter.end_fill()
+
+    # Draw head
+    painter.goto(x, y + 20)
+    painter.begin_fill()
+    painter.circle(10)  # Head
+    painter.end_fill()
+
+    # Draw wings
+    painter.goto(x - 15, y + 10)
+    painter.pendown()
+    painter.goto(x - 5, y)
+    painter.goto(x, y + 10)
+    painter.penup()
+
+    # Draw beak
+    painter.goto(x + 10, y + 20)
+    painter.pendown()
+    painter.goto(x + 15, y + 25)
+    painter.goto(x + 10, y + 25)
+    painter.penup()
+
+def get_user_input():
+    valid_animals = {"cats": draw_cat, "turtles": draw_turtle, "birds": draw_bird}
+    
+    while True:
+        user_input = input("I draw animals. What animal and how many would you like me to draw? (e.g., 3 cats): ").strip().lower()
+        parts = user_input.split()
         
-        turtle.fillcolor("black")
-        turtle.begin_fill()
-        turtle.circle(5)  
-        turtle.end_fill()
+        num = 1
+        animal_type = None
+        last_num = None
+        
+        for part in parts:
+            if part.isdigit():
+                last_num = int(part)
+            elif part in valid_animals:
+                animal_type = part
+        
+        if animal_type:
+            num = last_num if last_num is not None else num
+            num = min(num, 30)  
 
-def draw_legs():
-    positions = [(70, 60), (70, -40), (-70, 60), (-70, -40)]  # Leg positions
-    for pos in positions:
-        turtle.penup()
-        turtle.goto(pos)
-        turtle.pendown()
-        turtle.fillcolor("green")
-        turtle.begin_fill()
-        turtle.circle(20)  # Draw the leg
-        turtle.end_fill()
+            if num > 0:
+                return animal_type, num
+            else:
+                print("Invalid number. Please enter a valid number (1-30).")
+        else:
+            print("Invalid input. Please enter a valid animal type (cats, turtles, birds) and a valid number (1-30).")
 
-# Function to draw the turtle's tail
-def draw_tail():
-    turtle.penup()
-    turtle.goto(0, -100)  # Move to tail position
-    turtle.pendown()
-    turtle.fillcolor("green")
-    turtle.begin_fill()
-    turtle.goto(-20, -130)  # Draw the tail
-    turtle.goto(0, -100)  # Return to the base
-    turtle.end_fill()
+animal_type, num = get_user_input()
 
-# Main function
-def main():
-    shell()  # Draw the shell
-    draw_head()  # Draw the head
-    draw_eyes()  # Draw the eyes
-    draw_legs()  # Draw the legs
-    draw_tail()  # Draw the tail
+screen = trtl.Screen()
+screen.bgcolor("white")  # Set background color to white
+painter = trtl.Turtle()
+painter.speed(0)
 
-    turtle.done()  # Finish drawing
+# Starting coordinates and offset values
+x_start, y_start = -200, 200
+x_offset, y_offset = 100, -100
+animal_func = {
+    "turtles": draw_turtle,
+    "cats": draw_cat,
+    "birds": draw_bird
+}
 
-# Run the program
-if __name__ == "__main__":
-    main()
+for i in range(num):
+    position_x = x_start + i * x_offset
+    position_y = y_start + i * y_offset
+    animal_func[animal_type](painter, position_x, position_y)
+
+painter.hideturtle()
+screen.mainloop()
